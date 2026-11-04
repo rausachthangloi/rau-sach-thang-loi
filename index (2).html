@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa Hàng Rau Sạch Thắng Lợi - Nông Sản Hữu Cơ & Thực Phẩm Sạch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 9999px;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .slide-fade {
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen">
+
+    <!-- Top Bar Bar thông tin -->
+    <div class="bg-green-900 text-green-100 text-xs py-1.5 px-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span><i class="fa-solid fa-phone mr-1"></i> Hotline: 0987.654.321</span>
+                <span class="hidden sm:inline"><i class="fa-solid fa-clock mr-1"></i> Mở cửa: 06:00 - 20:00 hàng ngày</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="hidden md:inline"><i class="fa-solid fa-location-dot mr-1"></i> 123 Đường Thắng Lợi, Hà Nội</span>
+                <span class="bg-green-700 px-2 py-0.5 rounded text-[10px] font-semibold uppercase">VietGAP Certified</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header chính -->
+    <header class="bg-green-700 text-white sticky top-0 z-40 shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+                <div class="bg-white p-2 rounded-full text-green-700 shadow">
+                    <i class="fa-solid fa-leaf text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black uppercase tracking-wider leading-tight">Rau Sạch Thắng Lợi</h1>
+                    <p class="text-xs text-green-200">Nông Sản Sạch - Cho Mọi Bữa Ăn Ngon</p>
+                </div>
+            </div>
+
+            <!-- Tìm kiếm -->
+            <div class="hidden md:flex flex-1 max-w-lg mx-4">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Tìm tên rau, củ, trái cây, combo..." class="w-full pl-10 pr-4 py-2.5 rounded-full text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-inner">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Nút Giỏ hàng -->
+            <button onclick="toggleCartModal()" class="relative bg-yellow-500 hover:bg-yellow-400 text-green-950 font-bold px-4 py-2 rounded-full flex items-center space-x-2 transition shadow">
+                <i class="fa-solid fa-basket-shopping text-lg"></i>
+                <span class="hidden sm:inline">Giỏ hàng</span>
+                <span id="cartCount" class="badge">0</span>
+            </button>
+        </div>
+
+        <!-- Tìm kiếm trên di động -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative w-full">
+                <input type="text" id="mobileSearchInput" oninput="syncAndSearch(this.value)" placeholder="Tìm sản phẩm..." class="w-full pl-9 pr-4 py-2 rounded-full text-gray-800 text-sm focus:outline-none">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner Carousel -->
+    <section class="bg-green-800 relative overflow-hidden text-white py-10 px-4">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
+            <div class="md:w-1/2 space-y-3 text-center md:text-left mb-6 md:mb-0">
+                <span id="bannerTag" class="bg-yellow-400 text-green-950 text-xs font-bold px-3 py-1 rounded-full uppercase">Ưu Đãi Đặc Biệt</span>
+                <h2 id="bannerTitle" class="text-3xl md:text-4xl font-extrabold leading-tight">Rau Hữu Cơ Tươi Tắm Mỗi Ngày</h2>
+                <p id="bannerDesc" class="text-green-100 text-sm md:text-base">Được thu hái trực tiếp từ trang trại chuẩn VietGAP tại Ba Vì lúc 4h sáng.</p>
+                <div class="pt-2">
+                    <a href="#shop" class="inline-block bg-white text-green-800 font-bold px-6 py-2.5 rounded-full shadow hover:bg-yellow-300 transition">Khám Phá Ngay</a>
+                </div>
+            </div>
+            <div class="md:w-1/3 flex justify-center">
+                <img id="bannerImg" src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500" alt="Rau Sạch" class="rounded-xl shadow-2xl border-4 border-white/20 max-h-60 object-cover">
+            </div>
+        </div>
+    </section>
+
+    <!-- Cam kết dịch vụ nhanh -->
+    <section class="bg-white border-b py-4 shadow-sm">
+        <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-xs md:text-sm">
+            <div class="flex items-center justify-center space-x-2 p-2">
+                <i class="fa-solid fa-certificate text-green-600 text-xl"></i>
+                <span class="font-semibold">Chuẩn VietGAP 100%</span>
+            </div>
+            <div class="flex items-center justify-center space-x-2 p-2">
+                <i class="fa-solid fa-truck-fast text-green-600 text-xl"></i>
+                <span class="font-semibold">Giao Hỏa Tốc 2h</span>
+            </div>
+            <div class="flex items-center justify-center space-x-2 p-2">
+                <i class="fa-solid fa-hand-holding-dollar text-green-600 text-xl"></i>
+                <span class="font-semibold">Freeship Đơn > 200k</span>
+            </div>
+            <div class="flex items-center justify-center space-x-2 p-2">
+                <i class="fa-solid fa-arrows-rotate text-green-600 text-xl"></i>
+                <span class="font-semibold">Đổi Trả Miễn Phí 24h</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Khu vực Sản Phẩm chính -->
+    <main id="shop" class="container mx-auto px-4 py-8 flex-1">
+        
+        <!-- Bộ lọc & Sắp xếp -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Danh Mục Sản Phẩm</h2>
+                <p class="text-xs text-gray-500">Hiển thị các sản phẩm tươi ngon nhất trong ngày</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Sắp xếp giá -->
+                <select id="sortSelect" onchange="applyFilters()" class="bg-white border border-gray-300 text-xs md:text-sm rounded-lg p-2 focus:ring-green-500 focus:border-green-500">
+                    <option value="default">Sắp xếp: Mặc định</option>
+                    <option value="price-asc">Giá: Thấp đến Cao</option>
+                    <option value="price-desc">Giá: Cao đến Thấp</option>
+                    <option value="rating">Đánh giá cao nhất</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Các nút lọc danh mục -->
+        <div class="flex flex-wrap gap-2 mb-8" id="categoryButtons">
+            <button onclick="filterCategory('all')" class="cat-btn bg-green-700 text-white px-4 py-2 rounded-full font-medium text-sm shadow-sm">Tất cả sản phẩm</button>
+            <button onclick="filterCategory('la')" class="cat-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-medium text-sm hover:bg-green-50">Rau ăn lá</button>
+            <button onclick="filterCategory('cu')" class="cat-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-medium text-sm hover:bg-green-50">Củ & Quả</button>
+            <button onclick="filterCategory('nam')" class="cat-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-medium text-sm hover:bg-green-50">Nấm tươi</button>
+            <button onclick="filterCategory('traicay')" class="cat-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-medium text-sm hover:bg-green-50">Trái cây hữu cơ</button>
+            <button onclick="filterCategory('combo')" class="cat-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-medium text-sm hover:bg-green-50">Combo Tiết Kiệm</button>
+        </div>
+
+        <!-- Danh sách Lưới Sản Phẩm -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- JS render sản phẩm -->
+        </div>
+    </main>
+
+    <!-- Phần Kiến thức / Mẹo Rau Sạch -->
+    <section class="bg-green-50 py-10 border-t border-b border-green-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 text-center">Góc Chia Sẻ Kinh Nghiệm</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300" class="w-full h-36 object-cover rounded-lg mb-3" alt="Rau xanh">
+                    <h3 class="font-bold text-green-900 mb-1 text-sm">Cách Nhận Biết Rau Củ Không Hóa Chất</h3>
+                    <p class="text-xs text-gray-600">Rau hữu cơ thường có màu xanh tự nhiên, lá dày và không quá bóng mượt bất thường...</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1518843875459-f738682238a6?w=300" class="w-full h-36 object-cover rounded-lg mb-3" alt="Bảo quản rau">
+                    <h3 class="font-bold text-green-900 mb-1 text-sm">Mẹo Bảo Quản Rau Tươi Trong Tủ Lạnh 7 Ngày</h3>
+                    <p class="text-xs text-gray-600">Không nên rửa rau trước khi cất tủ lạnh, bọc qua một lớp giấy thấm ẩm giúp giữ độ tươi lâu...</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1598170845058-12ef4a457939?w=300" class="w-full h-36 object-cover rounded-lg mb-3" alt="Nước ép">
+                    <h3 class="font-bold text-green-900 mb-1 text-sm">Công Thức Nước Ép Detox Từ Củ Quả Organic</h3>
+                    <p class="text-xs text-gray-600">Kết hợp cà rốt, dưa chuột và táo xanh giúp thanh lọc cơ thể và sáng da mỗi sáng...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Đánh giá từ khách hàng -->
+    <section class="py-10 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 text-center">Khách Hàng Nói Về Thắng Lợi</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="text-yellow-400 text-xs mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="text-xs text-gray-600 italic">"Rau giao đến tận nhà rất tươi, đóng gói cẩn thận. Nhà mình mua ở đây nửa năm nay rất yên tâm."</p>
+                    <p class="text-xs font-bold text-gray-800 mt-3">- Chị Minh Anh (Cầu Giấy, Hà Nội)</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="text-yellow-400 text-xs mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="text-xs text-gray-600 italic">"Giao hàng siêu nhanh, mới đặt 1 tiếng đã có rau nấu bữa trưa. Combo rau lẩu rất đầy đặn!"</p>
+                    <p class="text-xs font-bold text-gray-800 mt-3">- Bác Tuấn (Đống Đa, Hà Nội)</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="text-yellow-400 text-xs mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="text-xs text-gray-600 italic">"Giá cả hợp lý so với chất lượng VietGAP. Nhân viên tư vấn nhiệt tình, ship đúng hẹn."</p>
+                    <p class="text-xs font-bold text-gray-800 mt-3">- Chị Thanh Hằng (Thanh Xuân, Hà Nội)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 pt-10 pb-6 mt-auto">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-sm">
+            <div>
+                <div class="flex items-center space-x-2 mb-3">
+                    <i class="fa-solid fa-leaf text-green-500 text-2xl"></i>
+                    <span class="font-bold text-white text-lg">Rau Sạch Thắng Lợi</span>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed mb-3">Hệ thống cung cấp nông sản sạch, thực phẩm hữu cơ an toàn cho sức khỏe gia đình Việt.</p>
+                <div class="flex space-x-3 text-lg text-gray-400">
+                    <a href="#" class="hover:text-green-500"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-green-500"><i class="fa-brands fa-zalo"></i></a>
+                    <a href="#" class="hover:text-green-500"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 border-b border-gray-700 pb-1">Danh Mục</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#shop" onclick="filterCategory('la')" class="hover:text-green-400">Rau ăn lá tươi hằng ngày</a></li>
+                    <li><a href="#shop" onclick="filterCategory('cu')" class="hover:text-green-400">Củ quả đà lạt</a></li>
+                    <li><a href="#shop" onclick="filterCategory('nam')" class="hover:text-green-400">Nấm tươi hữu cơ</a></li>
+                    <li><a href="#shop" onclick="filterCategory('traicay')" class="hover:text-green-400">Trái cây sạch 3 miền</a></li>
+                    <li><a href="#shop" onclick="filterCategory('combo')" class="hover:text-green-400">Combo gia đình tiết kiệm</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 border-b border-gray-700 pb-1">Chính Sách</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-green-400">Chính sách giao hàng 2h</a></li>
+                    <li><a href="#" class="hover:text-green-400">Chính sách đổi trả nông sản</a></li>
+                    <li><a href="#" class="hover:text-green-400">Chứng nhận an toàn VietGAP</a></li>
+                    <li><a href="#" class="hover:text-green-400">Bảo mật thông tin khách hàng</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 border-b border-gray-700 pb-1">Liên Hệ Giao Hàng</h4>
+                <p class="text-xs mb-2"><i class="fa-solid fa-location-dot text-green-500 mr-2"></i>123 Đường Thắng Lợi, Cầu Giấy, Hà Nội</p>
+                <p class="text-xs mb-2"><i class="fa-solid fa-phone text-green-500 mr-2"></i>0987.654.321 / 024.3333.8888</p>
+                <p class="text-xs mb-2"><i class="fa-solid fa-envelope text-green-500 mr-2"></i>rausachthangloi@gmail.com</p>
+            </div>
+        </div>
+        <div class="text-center text-xs text-gray-500 pt-4 border-t border-gray-800">
+            © 2026 Cửa Hàng Rau Sạch Thắng Lợi. Thiết kế cho báo cáo & phục vụ khách hàng.
+        </div>
+    </footer>
+
+    <!-- Modal Chi Tiết Sản Phẩm (Quick View) -->
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative animate-fade-in">
+            <button onclick="closeDetailModal()" class="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full w-8 h-8 flex items-center justify-center z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="detailContent" class="p-6">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Giỏ Hàng & Thanh Toán -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between p-6 shadow-2xl overflow-y-auto">
+            <div>
+                <div class="flex justify-between items-center border-b pb-4 mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i class="fa-solid fa-cart-shopping text-green-600 mr-2"></i> Giỏ Hàng Của Bạn
+                    </h3>
+                    <button onclick="toggleCartModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                
+                <!-- Danh sách món -->
+                <div id="cartItems" class="space-y-4 max-h-[40vh] overflow-y-auto pr-1">
+                    <!-- Render by JS -->
+                </div>
+            </div>
+
+            <!-- Tính tiền & Form đặt -->
+            <div class="border-t pt-4 mt-4 bg-white">
+                <div class="space-y-1 text-sm mb-3">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Tạm tính:</span>
+                        <span id="subTotal">0đ</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Phí giao hàng:</span>
+                        <span id="shippingFee" class="text-green-600">Miễn phí</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-base text-gray-800 border-t pt-2">
+                        <span>Tổng thanh toán:</span>
+                        <span id="cartTotal" class="text-green-700 text-lg">0đ</span>
+                    </div>
+                </div>
+                
+                <form id="checkoutForm" onsubmit="handleCheckout(event)" class="space-y-2.5">
+                    <input type="text" id="custName" placeholder="Họ và tên người nhận" required class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-600">
+                    <input type="tel" id="custPhone" placeholder="Số điện thoại" required class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-600">
+                    <input type="text" id="custAddress" placeholder="Địa chỉ giao hàng chi tiết" required class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-600">
+                    
+                    <div class="text-xs text-gray-600 font-semibold mt-2">Hình thức thanh toán:</div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="border p-2 rounded-lg flex items-center space-x-1.5 cursor-pointer hover:bg-green-50">
+                            <input type="radio" name="payment" value="cod" checked class="text-green-600">
+                            <span>Tiền mặt (COD)</span>
+                        </label>
+                        <label class="border p-2 rounded-lg flex items-center space-x-1.5 cursor-pointer hover:bg-green-50">
+                            <input type="radio" name="payment" value="qr" class="text-green-600">
+                            <span>Chuyển khoản QR</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-lg shadow-md transition mt-2 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-check"></i> <span>Xác Nhận Đặt Hàng</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script điều khiển -->
+    <script>
+        // Cơ sở dữ liệu sản phẩm đầy đủ
+        const products = [
+            { id: 1, name: 'Cải Ngọt Hữu Cơ VietGAP', category: 'la', price: 15000, unit: 'Bó 500g', rating: 5, image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400', desc: 'Cải ngọt trồng theo hướng hữu cơ tại Ba Vì, ngọt mát, lá dày không hóa chất bảo quản.' },
+            { id: 2, name: 'Rau Muống Tươi Thu Hoạch Sáng', category: 'la', price: 12000, unit: 'Bó 500g', rating: 4.8, image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400', desc: 'Rau muống ngọn nhỏ giòn ngon, thích hợp xào tỏi hoặc luộc lấy nước mát.' },
+            { id: 3, name: 'Cà Rốt Đà Lạt Tươi', category: 'cu', price: 25000, unit: 'Kg', rating: 4.9, image: 'https://images.unsplash.com/photo-1598170845058-12ef4a457939?w=400', desc: 'Cà rốt Đà Lạt củ đỏ mọng, giàu Vitamin A, thích hợp ép nước hoặc nấu canh.' },
+            { id: 4, name: 'Cà Chua Sạch Mọng Nước', category: 'cu', price: 22000, unit: 'Kg', rating: 4.7, image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400', desc: 'Cà chua chín cây tự nhiên, vị chua thanh ngọt nhẹ.' },
+            { id: 5, name: 'Nấm Kim Chấm Tươi', category: 'nam', price: 18000, unit: 'Gói 200g', rating: 5, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400', desc: 'Nấm kim châm trắng giòn, chứng nhận an toàn thực phẩm.' },
+            { id: 6, name: 'Dưa Hấu Long An Ruột Đỏ', category: 'traicay', price: 35000, unit: 'Quả (~2kg)', rating: 4.8, image: 'https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=400', desc: 'Dưa hấu ngọt đậm, vỏ mỏng, nhiều nước giải nhiệt rất tốt.' },
+            { id: 7, name: 'Combo Rau Luộc Lẩu Gia Đình', category: 'combo', price: 65000, unit: 'Set 1.8kg', rating: 5, image: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?w=400', desc: 'Gồm: Cải thảo, nấm, rau cúc, ngô ngọt, cà chua - Đủ cho 4-5 người ăn lẩu.' },
+            { id: 8, name: 'Bắp Cải Trắng Đà Lạt', category: 'cu', price: 18000, unit: 'Kg', rating: 4.6, image: 'https://images.unsplash.com/photo-1550081699-79c0c2e78577?w=400', desc: 'Bắp cải cuộn chặt, ngọt đậm, thích hợp luộc hoặc làm bắp cải cuộn thịt.' },
+            { id: 9, name: 'Xà Lách Lô Tô Xanh Organic', category: 'la', price: 20000, unit: 'Cây 300g', rating: 4.9, image: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400', desc: 'Xà lách thủy canh giòn ngọt, chuyên dùng ăn sống hoặc làm salad.' },
+            { id: 10, name: 'Táo Xanh Ninh Thuận', category: 'traicay', price: 45000, unit: 'Kg', rating: 4.7, image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400', desc: 'Táo giòn rụm, vị chua nhẹ mát lành, trồng sạch không hóa chất.' }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('thangloi_cart')) || [];
+        let currentCategory = 'all';
+
+        // Slideshow Banner
+        const banners = [
+            { tag: 'Ưu Đãi Hôm Nay', title: 'Rau Hữu Cơ Tươi Tắm Mỗi Ngày', desc: 'Thu hái trực tiếp từ trang trại Ba Vì lúc 4h sáng.', img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500' },
+            { tag: 'Miễn Phí Vận Chuyển', title: 'Giao Nông Sản Tận Nhà Trong 2H', desc: 'Freeship cho đơn hàng từ 200.000đ nội thành Hà Nội.', img: 'https://images.unsplash.com/photo-1598170845058-12ef4a457939?w=500' },
+            { tag: 'Khuyến Mãi Combo', title: 'Combo Rau Củ Tiết Kiệm 20%', desc: 'Đầy đủ dinh dưỡng cho gia đình trọn tuần.', img: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?w=500' }
+        ];
+        let currentSlide = 0;
+
+        function startBannerSlide() {
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % banners.length;
+                const b = banners[currentSlide];
+                document.getElementById('bannerTag').textContent = b.tag;
+                document.getElementById('bannerTitle').textContent = b.title;
+                document.getElementById('bannerDesc').textContent = b.desc;
+                document.getElementById('bannerImg').src = b.img;
+            }, 4000);
+        }
+
+        // Khởi tạo trang
+        function init() {
+            applyFilters();
+            updateCartUI();
+            startBannerSlide();
+        }
+
+        // Áp dụng bộ lọc & Sắp xếp
+        function applyFilters() {
+            let result = [...products];
+
+            // 1. Lọc Danh mục
+            if (currentCategory !== 'all') {
+                result = result.filter(p => p.category === currentCategory);
+            }
+
+            // 2. Lọc Tìm kiếm
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (query) {
+                result = result.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+            }
+
+            // 3. Sắp xếp
+            const sortVal = document.getElementById('sortSelect').value;
+            if (sortVal === 'price-asc') {
+                result.sort((a, b) => a.price - b.price);
+            } else if (sortVal === 'price-desc') {
+                result.sort((a, b) => b.price - a.price);
+            } else if (sortVal === 'rating') {
+                result.sort((a, b) => b.rating - a.rating);
+            }
+
+            renderGrid(result);
+        }
+
+        // Render danh sách sản phẩm
+        function renderGrid(items) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500"><i class="fa-solid fa-store-slash text-4xl mb-3 text-gray-300"></i><p>Không tìm thấy sản phẩm phù hợp.</p></div>';
+                return;
+            }
+
+            items.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition duration-200 flex flex-col justify-between group';
+                card.innerHTML = `
+                    <div class="relative overflow-hidden cursor-pointer" onclick="openDetailModal(${p.id})">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+                        <span class="absolute top-2 left-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">VietGAP</span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-1 text-yellow-400 text-xs mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <span class="text-gray-600 font-semibold text-[11px]">${p.rating}</span>
+                            </div>
+                            <h3 onclick="openDetailModal(${p.id})" class="font-bold text-gray-800 hover:text-green-700 cursor-pointer line-clamp-1 mb-1">${p.name}</h3>
+                            <p class="text-xs text-gray-500 mb-2">Đơn vị: ${p.unit}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+                            <span class="text-green-700 font-extrabold text-base">${p.price.toLocaleString('vi-VN')}đ</span>
+                            <button onclick="addToCart(${p.id})" class="bg-green-700 hover:bg-green-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1 shadow-sm">
+                                <i class="fa-solid fa-cart-plus"></i> <span>Thêm</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Lọc Danh mục button
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = 'cat-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-medium text-sm hover:bg-green-50';
+            });
+            event.target.className = 'cat-btn bg-green-700 text-white px-4 py-2 rounded-full font-medium text-sm shadow-sm';
+            applyFilters();
+        }
+
+        function resetFilters() {
+            currentCategory = 'all';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sortSelect').value = 'default';
+            applyFilters();
+        }
+
+        function syncAndSearch(val) {
+            document.getElementById('searchInput').value = val;
+            applyFilters();
+        }
+
+        // Modal Chi Tiết Sản Phẩm
+        function openDetailModal(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+
+            const content = document.getElementById('detailContent');
+            content.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6">
+                    <img src="${p.image}" alt="${p.name}" class="w-full md:w-1/2 h-60 object-cover rounded-xl">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full">An toàn VietGAP</span>
+                            <h2 class="text-xl font-bold text-gray-800 mt-2">${p.name}</h2>
+                            <p class="text-green-700 font-extrabold text-xl my-2">${p.price.toLocaleString('vi-VN')}đ / ${p.unit}</p>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-4">${p.desc}</p>
+                        </div>
+                        <button onclick="addToCart(${p.id}); closeDetailModal();" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2.5 rounded-lg transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-basket-shopping"></i> <span>Thêm Vào Giỏ Hàng</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        // Quản lý Giỏ Hàng
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            saveCart();
+            updateCartUI();
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            saveCart();
+            updateCartUI();
+        }
+
+        function saveCart() {
+            localStorage.setItem('thangloi_cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const subTotal = document.getElementById('subTotal');
+            const shippingFee = document.getElementById('shippingFee');
+            const cartTotal = document.getElementById('cartTotal');
+
+            const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
+            cartCount.textContent = totalItems;
+
+            cartItems.innerHTML = '';
+            let rawTotal = 0;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="text-center text-gray-400 py-8"><i class="fa-solid fa-basket-shopping text-3xl mb-2"></i><p class="text-xs">Giỏ hàng của bạn đang trống.</p></div>';
+            } else {
+                cart.forEach(item => {
+                    rawTotal += item.price * item.quantity;
+                    const el = document.createElement('div');
+                    el.className = 'flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100';
+                    el.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.image}" class="w-12 h-12 rounded object-cover">
+                            <div>
+                                <h4 class="font-bold text-xs text-gray-800 line-clamp-1">${item.name}</h4>
+                                <span class="text-xs text-green-700 font-semibold">${item.price.toLocaleString('vi-VN')}đ</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 bg-white border border-gray-300 rounded flex items-center justify-center text-xs font-bold">-</button>
+                            <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
+                            <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 bg-white border border-gray-300 rounded flex items-center justify-center text-xs font-bold">+</button>
+                        </div>
+                    `;
+                    cartItems.appendChild(el);
+                });
+            }
+
+            subTotal.textContent = rawTotal.toLocaleString('vi-VN') + 'đ';
+            
+            // Tính phí vận chuyển (Miễn phí từ 200k)
+            let ship = (rawTotal >= 200000 || rawTotal === 0) ? 0 : 20000;
+            shippingFee.textContent = ship === 0 ? 'Miễn phí' : ship.toLocaleString('vi-VN') + 'đ';
+
+            cartTotal.textContent = (rawTotal + ship).toLocaleString('vi-VN') + 'đ';
+        }
+
+        function toggleCartModal() {
+            document.getElementById('cartModal').classList.toggle('hidden');
+        }
+
+        // Đặt hàng
+        function handleCheckout(e) {
+            e.preventDefault();
+            if (cart.length === 0) {
+                alert('Giỏ hàng của bạn đang trống!');
+                return;
+            }
+
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const address = document.getElementById('custAddress').value;
+
+            alert(`Cảm ơn quý khách ${name}!\nĐơn hàng của bạn đã được ghi nhận. Rau Sạch Thắng Lợi sẽ liên hệ qua SĐT ${phone} và giao hàng đến địa chỉ "${address}" trong vòng 2 giờ.`);
+            
+            cart = [];
+            saveCart();
+            updateCartUI();
+            toggleCartModal();
+        }
+
+        init();
+    </script>
+</body>
+</html>
